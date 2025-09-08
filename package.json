@@ -1,0 +1,26 @@
+{
+  "name": "toggle-server",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "dev": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sandeep-sana/toggle-server.git"
+  },
+  "author": "sandeep sana",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sandeep-sana/toggle-server/issues"
+  },
+  "homepage": "https://github.com/sandeep-sana/toggle-server#readme",
+  "description": "",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.2",
+    "express": "^5.1.0",
+    "mongoose": "^8.18.0",
+    "nodemon": "^3.1.10"
+  }
+}
