@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
-const superAdminRoute = require('../routes/super-admin')
+const userRoute = require('./user')
 
-router.use('/super-admin', superAdminRoute);
+router.use('/user', userRoute);
 
 module.exports = router
