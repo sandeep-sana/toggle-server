@@ -5,12 +5,12 @@ const Schema = new mongoose.Schema({
     domain: { type: String },
     password: { type: String },
     lastName: { type: String },
-    companyName: {type: String},
+    companyName: { type: String },
     firstName: { type: String },
     discription: { type: String },
     isCreatedDatabase: { type: Boolean, default: false },
     role: { type: String, enum: ["SUPER_ADMIN", "ADMIN"] },
     status: { type: String, default: "PENDING", enum: ["PENDING"] },
-})
+}, { timestamps: true })
 
 module.exports = Schema;

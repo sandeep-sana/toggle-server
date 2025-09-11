@@ -18,6 +18,7 @@ export const createDatabase = async (account) => {
             upsert: true,
             rawResult: true,
         });
+        
         const html = {
             USER_NAME: account.firstName + ' ' + account.lastName,
             EMAIL: account.email,

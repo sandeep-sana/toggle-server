@@ -4,12 +4,12 @@ const { MESSAGE } = require('../utils/message');
 const { createDatabase } = require('../helper/user');
 
 const fetchUser = async (req, res) => {
-  let { query = null, projection = null, options = null, dbName } = req.query;
+  let { query = null, projection = null, options = null } = req.query;
+  const dbName = req.headers['dbname'];
   query = query ? JSON.parse(query) : null;
   projection = projection ? JSON.parse(projection) : null;
   options = options ? JSON.parse(options) : null;
   try {
-    console.log(dbName)
     const user = await Dao.findOne(dbName, query, projection, options);
     if (!user) {
       return res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.EMAIL_PASSWORD_NOT_CORRECT });
@@ -21,7 +21,8 @@ const fetchUser = async (req, res) => {
   }
 }
 const fetchUsers = async (req, res) => {
-  let { query = null, projection = null, options = null, dbName } = req.query;
+  let { query = null, projection = null, options = null } = req.query;
+  const dbName = req.headers['dbname'];
   try {
     query = query ? JSON.parse(query) : null;
     projection = projection ? JSON.parse(projection) : null;
@@ -38,7 +39,8 @@ const fetchUsers = async (req, res) => {
 }
 
 const saveUser = async (req, res) => {
-  let { query = null, projection = null, options = null, dbName } = req.body;
+  let { query = null, projection = null, options = null } = req.body;
+  const dbName = req.headers['dbname'];
   query = query ? JSON.parse(query) : null;
   projection = projection ? JSON.parse(projection) : null;
   options = options ? JSON.parse(options) : null;
@@ -61,7 +63,8 @@ const saveUser = async (req, res) => {
 
 
 const fetchUserById = async (req, res) => {
-  const { _id, dbName } = req.params;
+  const { _id } = req.params;
+  const dbName = req.headers['dbname'];
   try {
     const user = await Dao.findOne(dbName, { _id: _id });
     if (!user) {
@@ -74,8 +77,9 @@ const fetchUserById = async (req, res) => {
   }
 }
 const updateUserById = async (req, res) => {
-  const { _id, dbName } = req.params;
-  console.log()
+  const { _id } = req.params;
+  const dbName = req.headers['dbname'];
+
   let { projection = null } = req.body;
   try {
     projection = projection ? JSON.parse(projection) : null;
@@ -90,7 +94,9 @@ const updateUserById = async (req, res) => {
   }
 }
 const createDatabaseById = async (req, res) => {
-  const { _id, dbName } = req.params;
+  const { _id } = req.params;
+  const dbName = req.headers['dbname'];
+
   try {
     const user = await Dao.findOneAndUpdate(dbName, { _id: _id }, { isCreatedDatabase: true });
     if (!user) {
