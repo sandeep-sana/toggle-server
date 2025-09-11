@@ -11,6 +11,7 @@ const Schema = new mongoose.Schema({
     isCreatedDatabase: { type: Boolean, default: false },
     role: { type: String, enum: ["SUPER_ADMIN", "ADMIN"] },
     status: { type: String, default: "PENDING", enum: ["PENDING"] },
+    modules: [{ type: String }],
 }, { timestamps: true })
 
 module.exports = Schema;

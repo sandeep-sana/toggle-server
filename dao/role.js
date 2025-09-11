@@ -2,7 +2,7 @@ const { dbconnection } = require('../db-connection');
 const Schema = require('../schema/role');
 const { SCHEMA } = require('../utils/schema');
 
-async function find(dbName, query, projection = {}, options = {}) {
+async function find(dbName, query={}, projection = {}, options = {}) {
   const Dao = await dbconnection(dbName, SCHEMA.ROLE, Schema);
   return await Dao.find(query, projection, options);
 }
