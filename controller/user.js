@@ -110,6 +110,23 @@ const createDatabaseById = async (req, res) => {
   }
 }
 
+const update = async (req, res) => {
+  const { dbname: dbName, _id } = req.headers;
+  let { query = null, projection = null, options = null } = req.body;
+
+  query = query ? JSON.parse(query) : null;
+  projection = projection ? JSON.parse(projection) : null;
+  options = options ? JSON.parse(options) : null;
+
+  try {
+    console.log(projection);
+    const user = await Dao.findOneAndUpdate(dbName, { _id, ...query }, projection, options);
+    return res.status(STATUS.OK).json({ user, message: MESSAGE.USER_UPDATED_SUCCESSFULLY });
+  } catch (error) {
+    console.error(error);
+    res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.SERVER_ERROR });
+  }
+}
 
 
 
@@ -121,6 +138,9 @@ module.exports = {
   /** GET */
 
   /** POST */
+  update,
+
+
   saveUser,
   updateUserById,
   createDatabaseById,

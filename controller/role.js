@@ -24,17 +24,25 @@ const saveRole = async (req, res) => {
   query = query ? JSON.parse(query) : null;
   projection = projection ? JSON.parse(projection) : null;
   options = options ? JSON.parse(options) : null;
+
   try {
+    if (query?._id) {
+      const role = await Dao.findOneAndUpdate(dbName, { _id: query._id }, query, { new: true, ...options });
+      if (!role) {
+        return res.status(STATUS.NOT_FOUND).json({ message: MESSAGE.ROLE_NOT_FOUND });
+      }
+      return res.status(STATUS.OK).json({ role, message: MESSAGE.ROLE_UPDATED_SUCCESSFULLY });
+    }
     const role = await Dao.insertOne(dbName, query, projection, options);
     if (!role) {
       return res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.SERVER_ERROR });
     }
-    return res.status(STATUS.CREATED).json({ user, message: MESSAGE.ROLE_CREATED_SUCCESSFULLY });
+    return res.status(STATUS.CREATED).json({ role, message: MESSAGE.ROLE_CREATED_SUCCESSFULLY });
   } catch (error) {
     console.error(error);
     res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.SERVER_ERROR });
   }
-}
+};
 
 
 

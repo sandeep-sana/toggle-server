@@ -26,7 +26,7 @@ require("dotenv").config({ path: `${__dirname}/../.env` });
         password: "Sandeep@123",
         status: "",
         role: "SUPER_ADMIN",
-        modules: ["ACCOUNT", "REJECT-ACCOUNT", "ACCEPT-ACCOUNT", "BLOCK-ACCOUNT"]
+        modules: ["DASHBOARD","ACCOUNT", "REJECT-ACCOUNT", "ACCEPT-ACCOUNT", "BLOCK-ACCOUNT"]
       },
       {
         new: true,
