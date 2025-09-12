@@ -17,7 +17,7 @@ require("dotenv").config({ path: `${__dirname}/../.env` });
 
     // 3) Perform update or insert
     const result = await Dao.findOneAndUpdate(
-      { role: "SUPER_ADMIN" },
+      { role: "SUPER-ADMIN" },
       {
         firstName: "sandeep",
         lastName: "sana",
@@ -25,7 +25,7 @@ require("dotenv").config({ path: `${__dirname}/../.env` });
         email: "rs@gmail.com",
         password: "Sandeep@123",
         status: "",
-        role: "SUPER_ADMIN",
+        role: "SUPER-ADMIN",
         modules: ["DASHBOARD","ACCOUNT", "REJECT-ACCOUNT", "ACCEPT-ACCOUNT", "BLOCK-ACCOUNT"]
       },
       {

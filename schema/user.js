@@ -13,6 +13,7 @@ const Schema = new mongoose.Schema({
     status: { type: String, default: "PENDING", enum: ["PENDING"] },
     modules: [{ type: String }],
     isHierarchy: { type: Boolean },
+    layout: { type: Object },
 }, { timestamps: true })
 
 module.exports = Schema;

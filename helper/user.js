@@ -6,6 +6,7 @@ import { CREATE_PASSWORD } from "../utils/email-template.js";
 export const createDatabase = async (account) => {
     try {
         await deleteDatabase(account.domain);
+        account.domain = account.domain.toLowerCase();
         await Dao.findOneAndUpdate(account.domain,
             { email: account.email },
             {
@@ -14,7 +15,7 @@ export const createDatabase = async (account) => {
                 email: account.email,
                 password: account.domain,
                 role: account.role,
-                modules: ["DASHBOARD"],
+                modules: ["DASHBOARD", "ACCESS"],
                 isHierarchy: false,
             }, {
             new: true,
