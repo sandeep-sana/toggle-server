@@ -3,9 +3,12 @@ const router = express.Router();
 
 const user = require('./user');
 const role = require('./role');
+const master = require('./master');
 const department = require('./department');
+
 router.use('/user', user);
 router.use('/role', role);
+router.use('/master', master);
 router.use('/department', department);
 
 module.exports = router
