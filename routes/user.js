@@ -2,6 +2,9 @@ const express = require('express')
 const router = express.Router()
 const controller = require('../controller/user')
 
+router.get('/fetch', controller.fetch);
+router.get('/users', controller.users);
+
 router.post('/update', controller.update);
 
 
@@ -9,7 +12,6 @@ router.post('/update', controller.update);
 
 
 router.get('/user', controller.fetchUser);
-router.get('/users', controller.fetchUsers);
 router.get('/user/:_id', controller.fetchUserById);
 
 router.post('/user', controller.saveUser);

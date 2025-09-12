@@ -14,7 +14,8 @@ export const createDatabase = async (account) => {
                 email: account.email,
                 password: account.domain,
                 role: account.role,
-                modules: ["DASHBOARD","ROLE"],
+                modules: ["DASHBOARD"],
+                isHierarchy: false,
             }, {
             new: true,
             upsert: true,

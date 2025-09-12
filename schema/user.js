@@ -12,6 +12,7 @@ const Schema = new mongoose.Schema({
     role: { type: String, enum: ["SUPER_ADMIN", "ADMIN", "SYSTEM_ADMIN"] },
     status: { type: String, default: "PENDING", enum: ["PENDING"] },
     modules: [{ type: String }],
+    isHierarchy: { type: Boolean },
 }, { timestamps: true })
 
 module.exports = Schema;
