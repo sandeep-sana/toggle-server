@@ -9,7 +9,7 @@ const Schema = new mongoose.Schema({
     firstName: { type: String },
     discription: { type: String },
     isCreatedDatabase: { type: Boolean, default: false },
-    role: { type: String, enum: ["SUPER_ADMIN", "ADMIN", "SYSTEM_ADMIN"] },
+    role: { type: String, enum: ["SUPER-ADMIN", "ADMIN", "SYSTEM-ADMIN"] },
     status: { type: String, default: "PENDING", enum: ["PENDING"] },
     modules: [{ type: String }],
     isHierarchy: { type: Boolean },
