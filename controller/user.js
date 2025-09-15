@@ -98,7 +98,11 @@ const createDatabaseById = async (req, res) => {
   const dbName = req.headers['dbname'];
 
   try {
-    const user = await Dao.findOneAndUpdate(dbName, { _id: _id }, { isCreatedDatabase: true });
+    const isEmailExist = await Dao.findOne(dbName, { _id: _id });
+    if(!isEmailExist){
+      return res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: '' });
+    }
+    const user = await Dao.findOneAndUpdate(dbName, { _id: _id }, { isCreatedDatabase: true, password: isEmailExist.domain });
     if (!user) {
       return res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: '' });
     }

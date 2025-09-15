@@ -4,6 +4,7 @@ const field = {
     default: { type: String },
     dataType: { type: String },
     columnName: { type: String },
+    enum: [{ type: String }],
 }
 
 const Schema = new mongoose.Schema(

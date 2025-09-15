@@ -8,6 +8,12 @@ router.get('/fetchs', controller.fetchs);
 router.get('/fetch/:_id', controller.fetch);
 
 router.post('/add', controller.add);
+router.post('/update/:_id', controller.update);
+
+
+
+
+
 
 
 

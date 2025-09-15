@@ -59,6 +59,25 @@ const add = async (req, res) => {
     res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.SERVER_ERROR });
   }
 };
+const update = async (req, res) => {
+  const { dbname: dbName } = req.headers;
+  const { _id } = req.params;
+  let { query = null, projection = null, options = null } = req.body;
+  query = query ? JSON.parse(query) : null;
+  projection = projection ? JSON.parse(projection) : null;
+  options = options ? JSON.parse(options) : null;
+
+  try {
+    const master = await Dao.findOneAndUpdate(dbName, { ...query, _id }, projection, options);
+    if (!master) {
+      return res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.SERVER_ERROR });
+    }
+    return res.status(STATUS.CREATED).json({ master, message: MESSAGE.MASTER_UPDATED_SUCCESSFULLY });
+  } catch (error) {
+    console.error(error);
+    res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.SERVER_ERROR });
+  }
+};
 
 
 
@@ -72,5 +91,6 @@ module.exports = {
 
   /** POST */
   add,
+  update,
   /** POST */
 }
