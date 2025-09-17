@@ -15,6 +15,9 @@ async function findOne(dbName, master, query, projection = {}, options = {}) {
 async function findOneAndUpdate(dbName, master, query, projection = {}, options = {}) {
   const DynamicSchema = generateDynamicSchema(master.fields);
   const Dao = await dbconnection(dbName, master.name, DynamicSchema);
+  console.log('query', query);
+  console.log('projection', projection);
+  console.log('options', options);
   return await Dao.findOneAndUpdate(query, projection, options)
 }
 async function update(dbName, master, query, projection = {}, options = {}) {
@@ -25,7 +28,14 @@ async function update(dbName, master, query, projection = {}, options = {}) {
 async function  insertOne(dbName, master, query, projection = {}, options = {}) {
   const DynamicSchema = generateDynamicSchema(master.fields);
   const Dao = await dbconnection(dbName, master.name, DynamicSchema);
+  console.log('333', query);
   return await Dao.insertOne(query, projection, options)
+
+}
+async function  deleteOne(dbName, master, query= {}, projection = {}, options = {}) {
+  const DynamicSchema = generateDynamicSchema(master.fields);
+  const Dao = await dbconnection(dbName, master.name, DynamicSchema);
+  return await Dao.deleteOne(query, projection, options)
 
 }
 async function aggregate(dbName, master, payload) {
@@ -40,5 +50,6 @@ module.exports = {
   findOne,
   insertOne,
   aggregate,
+  deleteOne,
   findOneAndUpdate,
 }

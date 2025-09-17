@@ -9,7 +9,8 @@ router.get('/fetchs/:_id', controller.fetchs);
 
 router.post('/add/:_id', controller.add);
 router.post('/update/:_id/:_listId', controller.update);
-// router.post('/update/:_id', controller.update);
+
+router.delete('/delete/:_id/:_listId', controller.deleteDynamicMaster);
 
 
 

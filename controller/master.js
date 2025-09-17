@@ -79,6 +79,21 @@ const update = async (req, res) => {
   }
 };
 
+const deleteMaster = async (req, res) => {
+  const { dbname: dbName } = req.headers;
+  const { _id } = req.params;
+  try {
+    const master = await Dao.deleteOne(dbName, { _id });
+    if (!master) {
+      return res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.SERVER_ERROR });
+    }
+    return res.status(STATUS.OK).json({ master, message: MESSAGE.MASTER.DELETED });
+  } catch (error) {
+    console.error(error);
+    res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.SERVER_ERROR });
+  }
+};
+
 
 
 
@@ -93,4 +108,7 @@ module.exports = {
   add,
   update,
   /** POST */
+  /** DELETE */
+  deleteMaster,
+  /** DELETE */
 }

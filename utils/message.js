@@ -2,6 +2,7 @@
 const COMMON = {
     UPDATED_SUCCESSFULLY: 'updated successfully!',
     CREATED_SUCCESSFULLY: 'created successfully!',
+    DELETED: 'deleted!',
     IS_REQUIRED: 'is required',
     NOT_FOUND: 'not found',
 }
@@ -20,6 +21,10 @@ const MESSAGE = {
     USER_UPDATED_SUCCESSFULLY: `User ${COMMON.UPDATED_SUCCESSFULLY}`,
     ROLE_UPDATED_SUCCESSFULLY: `Role ${COMMON.UPDATED_SUCCESSFULLY}`,
     MASTER_UPDATED_SUCCESSFULLY: `Master ${COMMON.UPDATED_SUCCESSFULLY}`,
+    MASTER_DELETED_SUCCESSFULLY: `Master ${COMMON.UPDATED_SUCCESSFULLY}`,
+    MASTER: {
+        DELETED: `Master ${COMMON.DELETED}`
+    }
 
 }
 

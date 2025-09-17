@@ -1,12 +1,11 @@
-import mongoose from "mongoose";
-
+import mongoose from 'mongoose';
 
 // Function that converts fields array → Mongoose schema definition
 export function generateDynamicSchema(fields) {
   const schemaDefinition = {};
 
   fields.forEach(field => {
-    let def = { type: String }; // default type
+    let def = { type: String }; // Default type
 
     // Map string dataType to mongoose type
     switch (field.dataType) {
@@ -33,14 +32,19 @@ export function generateDynamicSchema(fields) {
       def.enum = field.enum;
     }
 
+    // Handle unique property
+    if (field.unique === 'true') {
+      def.unique = true;
+    }
+
+    // Handle ref property
+    if (field.refs) {
+      def.ref = field.ref;  // Use ref to link to other schema
+    }
+
+    // Add the field to the schema definition
     schemaDefinition[field.columnName] = def;
   });
 
   return new mongoose.Schema(schemaDefinition, { timestamps: true });
 }
-
-
-// Generate schema dynamically
-// const DynamicModel = mongoose.model('ProjectMaster', DynamicSchema);
-
-// Now you can use DynamicModel like a normal Mongoose model

@@ -23,6 +23,10 @@ async function insertOne(dbName, query, projection = {}, options = {}) {
   const Dao = await dbconnection(dbName, SCHEMA.MASTER, Schema);
   return await Dao.insertOne(query, projection, options)
 }
+async function deleteOne(dbName, query, projection = {}, options = {}) {
+  const Dao = await dbconnection(dbName, SCHEMA.MASTER, Schema);
+  return await Dao.deleteOne(query, projection, options)
+}
 async function aggregate(dbName, payload) {
   const Dao = await dbconnection(dbName, SCHEMA.MASTER, Schema);
   return await Dao.aggregate(payload)
@@ -34,5 +38,6 @@ module.exports = {
   findOne,
   insertOne,
   aggregate,
+  deleteOne,
   findOneAndUpdate,
 }
