@@ -1,10 +1,11 @@
 
 const COMMON = {
+    DELETED: 'deleted!',
+    NOT_FOUND: 'not found',
+    ADD_UPDATE: 'Add/Update',
+    IS_REQUIRED: 'is required',
     UPDATED_SUCCESSFULLY: 'updated successfully!',
     CREATED_SUCCESSFULLY: 'created successfully!',
-    DELETED: 'deleted!',
-    IS_REQUIRED: 'is required',
-    NOT_FOUND: 'not found',
 }
 
 const MESSAGE = {
@@ -23,7 +24,10 @@ const MESSAGE = {
     MASTER_UPDATED_SUCCESSFULLY: `Master ${COMMON.UPDATED_SUCCESSFULLY}`,
     MASTER_DELETED_SUCCESSFULLY: `Master ${COMMON.UPDATED_SUCCESSFULLY}`,
     MASTER: {
-        DELETED: `Master ${COMMON.DELETED}`
+        DELETED: `Master ${COMMON.DELETED}`,
+    },
+    MASTER_BINDING_RULE: {
+        ADD_UPDATE: `Master Binding Rule ${COMMON.ADD_UPDATE}`,
     }
 
 }
