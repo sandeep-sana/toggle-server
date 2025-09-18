@@ -33,7 +33,7 @@ const fetch = async (req, res) => {
   try {
     const masterBindingRule = await Dao.findOne(dbName, { _id, ...query }, projection, options);
     if (!masterBindingRule) {
-      return res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.SERVER_ERROR });
+      return res.status(STATUS.OK).json({ masterBindingRule: null  });
     }
     return res.status(STATUS.OK).json({ masterBindingRule });
   } catch (error) {
