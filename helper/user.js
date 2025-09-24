@@ -1,5 +1,6 @@
-import Dao from "../dao/user.js";
 import mongoose from "mongoose";
+import UserDao from "../dao/user.js";
+import TaskDao from "../dao/task.js";
 import { sendEmail } from "../sendEmail.js";
 import { CREATE_PASSWORD } from "../utils/email-template.js";
 
@@ -7,7 +8,7 @@ export const createDatabase = async (account) => {
     try {
         await deleteDatabase(account.domain);
         account.domain = account.domain.toLowerCase();
-        await Dao.findOneAndUpdate(account.domain,
+        const user = await UserDao.findOneAndUpdate(account.domain,
             { email: account.email },
             {
                 firstName: account.firstName,
@@ -16,8 +17,8 @@ export const createDatabase = async (account) => {
                 password: account.domain,
                 role: account.role,
                 modules: [
-                    {label: 'DASHBOARD', value: 'DASHBOARD', path: ""},
-                    {label: 'ACCESS', value: 'ACCESS', path: ""},
+                    { label: 'DASHBOARD', value: 'DASHBOARD', path: "" },
+                    { label: 'ACCESS', value: 'ACCESS', path: "" },
                 ],
                 isHierarchy: false,
             }, {
@@ -25,6 +26,25 @@ export const createDatabase = async (account) => {
             upsert: true,
             rawResult: true,
         });
+        await TaskDao.findOneAndUpdate(account.domain,
+            { userId: user._id },
+            {
+                userId: user._id,
+                tasks: [
+                    {
+                        name: 'first setup the roles.',
+                        status: false,
+                    }
+                ]
+            },
+            {
+                new: true,
+                upsert: true,
+                rawResult: true,
+            }
+        )
+
+        console.log(user)
 
         const html = {
             USER_NAME: account.firstName + ' ' + account.lastName,
@@ -47,7 +67,7 @@ export const createDatabase = async (account) => {
     }
 };
 
-export const deleteDatabase = async(dbName) => {
+export const deleteDatabase = async (dbName) => {
     try {
         const dbUri = `${process.env.DATABASE_URI}${dbName}`;
         const conn = await mongoose.createConnection(dbUri, {

@@ -4,4 +4,5 @@ export const SCHEMA = {
     MASTER: 'master',
     MASTER_BINDING_RULE: 'masterBindingRule',
     DEPARTMENT: 'department',
+    TASK: 'task',
 };
