@@ -1,5 +1,10 @@
 const mongoose = require('mongoose')
 
+const moduleSchema = {
+    label: { type: String},
+    value: { type: String},
+    path: { type: String},
+}
 const Schema = new mongoose.Schema({
     email: { type: String },
     domain: { type: String },
@@ -11,7 +16,7 @@ const Schema = new mongoose.Schema({
     isCreatedDatabase: { type: Boolean, default: false },
     role: { type: String, enum: ["SUPER-ADMIN", "ADMIN", "SYSTEM-ADMIN"] },
     status: { type: String, default: "PENDING", enum: ["PENDING"] },
-    modules: [{ type: String }],
+    modules: [moduleSchema],
     isHierarchy: { type: Boolean },
     layout: { type: Object },
 }, { timestamps: true })
