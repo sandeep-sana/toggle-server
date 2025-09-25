@@ -3,9 +3,9 @@ const router = express.Router()
 const controller = require('../controller/task')
 
 
-router.get('/tasks', controller.getTasks);
+router.get('/fetchs', controller.fetchs);
 
-router.post('/task', controller.saveDepartment);
+router.post('/update', controller.update);
 
 
 

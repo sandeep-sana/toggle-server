@@ -3,22 +3,22 @@ const { STATUS } = require('../utils/status');
 const { MESSAGE } = require('../utils/message');
 
 
-const getTasks = async (req, res) => {
+const fetchs = async (req, res) => {
   const { dbname: dbName, _id } = req.headers;
-  let { query = null, projection = null, options = null } = req.body;
+  let { query = null, projection = null, options = null } = req.query;
   query = query ? JSON.parse(query) : null;
   projection = projection ? JSON.parse(projection) : null;
   options = options ? JSON.parse(options) : null;
   try {
-    const tasks = await Dao.find(dbName, { _id: query._id, ...query}, projection, options);
-    return res.status(STATUS.OK).json({ tasks });
+    const task = await Dao.findOne(dbName, query, projection, options);
+    return res.status(STATUS.OK).json({ task });
   } catch (error) {
     console.error(error);
     res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.SERVER_ERROR });
   }
 }
 
-const saveDepartment = async (req, res) => {
+const update = async (req, res) => {
   const { dbname: dbName, _id } = req.headers;
   let { query = null, projection = null, options = null } = req.body;
   query = query ? JSON.parse(query) : null;
@@ -26,18 +26,11 @@ const saveDepartment = async (req, res) => {
   options = options ? JSON.parse(options) : null;
 
   try {
-    if (query?._id) {
-      const role = await Dao.findOneAndUpdate(dbName, { _id: query._id }, query, { new: true, ...options });
-      if (!role) {
-        return res.status(STATUS.NOT_FOUND).json({ message: MESSAGE.ROLE_NOT_FOUND });
-      }
-      return res.status(STATUS.OK).json({ role, message: MESSAGE.ROLE_UPDATED_SUCCESSFULLY });
+    const task = await Dao.findOneAndUpdate(dbName, query, projection, options);
+    if (!task) {
+      return res.status(STATUS.NOT_FOUND).json({ message: MESSAGE.ROLE_NOT_FOUND });
     }
-    const role = await Dao.insertOne(dbName, query, projection, options);
-    if (!role) {
-      return res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.SERVER_ERROR });
-    }
-    return res.status(STATUS.OK).json({ role, message: MESSAGE.ROLE_CREATED_SUCCESSFULLY });
+    return res.status(STATUS.OK).json({ task, message: MESSAGE.ROLE_UPDATED_SUCCESSFULLY });
   } catch (error) {
     console.error(error);
     res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.SERVER_ERROR });
@@ -50,10 +43,10 @@ const saveDepartment = async (req, res) => {
 
 module.exports = {
   /** GET */
-  getTasks,
+  fetchs,
   /** GET */
 
   /** POST */
-  saveDepartment,
+  update,
   /** POST */
 }

@@ -13,6 +13,7 @@ async function findOne(dbName, query, projection = {}, options = {}) {
 }
 async function findOneAndUpdate(dbName, query, projection = {}, options = {}) {
   const Dao = await dbconnection(dbName, SCHEMA.TASK, Schema);
+  console.log(query, projection)
   return await Dao.findOneAndUpdate(query, projection, options)
 }
 async function update(dbName, query, projection = {}, options = {}) {
