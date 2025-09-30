@@ -19,7 +19,7 @@ const fetch = async (req, res) => {
   try {
     const user = await Dao.findOne(dbName, query, projection, options);
     if (!user) {
-      return res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.USER.EMAIL_PASSWORD_NOT_CORRECT });
+      return res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.USER.EMAIL_PASSWORD_NOT_CORRECT, query });
     }
     return res.status(STATUS.OK).json({ user, message: MESSAGE.USER.LOGIN_SUCCESSFULLY });
   } catch (error) {
