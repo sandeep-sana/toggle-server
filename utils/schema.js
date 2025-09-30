@@ -1,8 +1,11 @@
 export const SCHEMA = {
     USER: 'user',
     ROLE: 'role',
-    MASTER: 'master',
-    MASTER_BINDING_RULE: 'masterBindingRule',
-    DEPARTMENT: 'department',
     TASK: 'task',
+    PRICE: 'price',
+    MASTER: 'master',
+    SETTING: 'setting',
+    DASHBOARD: 'dashboard',
+    DEPARTMENT: 'department',
+    MASTER_BINDING_RULE: 'masterBindingRule',
 };

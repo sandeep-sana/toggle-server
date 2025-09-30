@@ -1,39 +1,20 @@
 const mongoose = require("mongoose");
 const Schema = require("../schema/user");
 const { dbconnection } = require("../db-connection");
+const { ROLE, SUPER_ADMIN_DETAILS } = require("../constant");
 require("dotenv").config({ path: `${__dirname}/../.env` });
 
 (async () => {
   try {
-    // 1) Connect once
     await mongoose.connect(process.env.MONGO_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
     console.log("✅ Connected to database:", process.env.MONGO_URI);
-
-    // 2) Use your custom Dao connection
     const Dao = await dbconnection("toggle", "user", Schema);
-
-    // 3) Perform update or insert
     const result = await Dao.findOneAndUpdate(
-      { role: "SUPER-ADMIN" },
-      {
-        firstName: "sandeep",
-        lastName: "sana",
-        companyName: "RS Limited",
-        email: "rs@gmail.com",
-        password: "Sandeep@123",
-        status: "",
-        role: "SUPER-ADMIN",
-        modules: [
-          { label: "DASHBOARD", value: "DASHBOARD", path: "" },
-          { label: "ACCOUNT", value: "ACCOUNT", path: "" },
-          { label: "REJECT-ACCOUNT", value: "REJECT-ACCOUNT", path: "" },
-          { label: "ACCEPT-ACCOUNT", value: "ACCEPT-ACCOUNT", path: "" },
-          { label: "BLOCK-ACCOUNT", value: "BLOCK-ACCOUNT", path: "" },
-        ]
-      },
+      { role: ROLE.SUPER_ADMIN },
+      SUPER_ADMIN_DETAILS,
       {
         new: true,
         upsert: true,

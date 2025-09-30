@@ -1,0 +1,81 @@
+const mongoose = require('mongoose');
+
+const Schema = new mongoose.Schema(
+    {
+        background: {
+            '--background-color-one': { type: String },
+            '--background-color-two': { type: String },
+            '--background-color-three': { type: String },
+            '--background-color-four': { type: String },
+            '--background-color-five': { type: String },
+            '--background-color-six': { type: String },
+            '--background-color-seven': { type: String },
+            '--background-color-eight': { type: String },
+            '--background-color-nine': { type: String },
+        },
+        hoverBackground: {
+            '--hover-background-color-one': { type: String },
+            '--hover-background-color-two': { type: String },
+            '--hover-background-color-three': { type: String },
+            '--hover-background-color-four': { type: String },
+            '--hover-background-color-five': { type: String },
+            '--hover-background-color-six': { type: String },
+            '--hover-background-color-seven': { type: String },
+            '--hover-background-color-eight': { type: String },
+            '--hover-background-color-nine': { type: String },
+        },
+        text: {
+            '--text-color-one': { type: String },
+            '--text-color-two': { type: String },
+            '--text-color-three': { type: String },
+            '--text-color-four': { type: String },
+            '--text-color-five': { type: String },
+            '--text-color-six': { type: String },
+            '--text-color-seven': { type: String },
+            '--text-color-eight': { type: String },
+            '--text-color-nine': { type: String },
+            '--text-color-ten': { type: String },
+        },
+        border: {
+            '--border-color-one': { type: String },
+            '--border-color-two': { type: String },
+            '--border-color-three': { type: String },
+            '--border-color-four': { type: String },
+            '--border-color-five': { type: String },
+            '--border-color-six': { type: String },
+            '--border-color-seven': { type: String },
+            '--border-color-eight': { type: String },
+            '--border-color-nine': { type: String },
+            '--border-color-ten': { type: String },
+        },
+        pending: {
+            '--pending-color-one': { type: String },
+            '--pending-color-two': { type: String },
+            '--pending-color-three': { type: String },
+            '--pending-color-four': { type: String },
+            '--pending-color-five': { type: String },
+            '--pending-color-six': { type: String },
+            '--pending-color-seven': { type: String },
+            '--pending-color-eight': { type: String },
+            '--pending-color-nine': { type: String },
+            '--pending-color-ten': { type: String },
+        },
+        complete: {
+            '--complete-color-one': { type: String },
+            '--complete-color-two': { type: String },
+            '--complete-color-three': { type: String },
+            '--complete-color-four': { type: String },
+            '--complete-color-five': { type: String },
+            '--complete-color-six': { type: String },
+            '--complete-color-seven': { type: String },
+            '--complete-color-eight': { type: String },
+            '--complete-color-nine': { type: String },
+            '--complete-color-ten': { type: String },
+        },
+        headerPosition: { type: String },
+
+    },
+    { timestamps: true }
+);
+
+module.exports = Schema;

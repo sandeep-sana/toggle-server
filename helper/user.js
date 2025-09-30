@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import UserDao from "../dao/user.js";
 import TaskDao from "../dao/task.js";
+import RoleDao from "../dao/role.js";
 import { sendEmail } from "../sendEmail.js";
 import { CREATE_PASSWORD } from "../utils/email-template.js";
 
@@ -16,9 +17,10 @@ export const createDatabase = async (account) => {
                 email: account.email,
                 password: account.domain,
                 role: account.role,
+                activeRole: account.activeRole,
                 modules: [
-                    { label: 'DASHBOARD', value: 'DASHBOARD', path: "" },
-                    { label: 'ACCESS', value: 'ACCESS', path: "" },
+                    { label: 'DASHBOARD', path: 'DASHBOARD'},
+                    { label: 'ACCESS', path: 'ACCESS'},
                 ],
                 isHierarchy: false,
             }, {
@@ -51,6 +53,12 @@ export const createDatabase = async (account) => {
                 new: true,
                 upsert: true,
                 rawResult: true,
+            }
+        )
+        await RoleDao.insertOne(account.domain,
+            {
+                name: user.activeRole,
+                isDefault: true,
             }
         )
 

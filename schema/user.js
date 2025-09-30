@@ -1,24 +1,25 @@
 const mongoose = require('mongoose')
 
 const moduleSchema = {
-    label: { type: String},
-    value: { type: String},
-    path: { type: String},
+    label: { type: String },
+    path: { type: String },
 }
 const Schema = new mongoose.Schema({
     email: { type: String },
+    modules: [moduleSchema],
     domain: { type: String },
     password: { type: String },
     lastName: { type: String },
-    companyName: { type: String },
     firstName: { type: String },
-    discription: { type: String },
-    isCreatedDatabase: { type: Boolean, default: false },
-    role: { type: String, enum: ["SUPER-ADMIN", "ADMIN", "SYSTEM-ADMIN"] },
-    status: { type: String, default: "PENDING", enum: ["PENDING"] },
-    modules: [moduleSchema],
+    companyName: { type: String },
+    phoneNumber: { type: String },
+    description: { type: String },
     isHierarchy: { type: Boolean },
-    layout: { type: Object },
+    isCreatedDatabase: { type: Boolean, default: false },
+    status: { type: String, default: "PENDING", enum: ["PENDING"] },
+    role: [{ type: String, enum: ["SUPER_ADMIN", "ADMIN", "SYSTEM_ADMIN"] }],
+    activeRole: { type: String, enum: ["SUPER_ADMIN", "ADMIN", "SYSTEM_ADMIN"] },
+    price: { type: Number},
 }, { timestamps: true })
 
 module.exports = Schema;

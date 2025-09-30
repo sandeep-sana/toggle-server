@@ -4,12 +4,27 @@ const COMMON = {
     NOT_FOUND: 'not found',
     ADD_UPDATE: 'Add/Update',
     IS_REQUIRED: 'is required',
+    ALREADY_EXIST: 'already exist',
     UPDATED_SUCCESSFULLY: 'updated successfully!',
     CREATED_SUCCESSFULLY: 'created successfully!',
+    DELETED_SUCCESSFULLY: 'deleted successfully!',
 }
 
 const MESSAGE = {
     SERVER_ERROR: 'Server error',
+    DELETED_SUCCESSFULLY: 'deleted successfully!',
+    /**  */
+
+    USER: {
+        LOGIN_SUCCESSFULLY: `Login successfully.`,
+        EMAIL_PASSWORD_NOT_CORRECT: `Email password not correct.`,
+        ACCOUNT_REGESTER_SUCCESSFULLY: `Account register successfully.`,
+    },
+    PRICE: {
+        NAME_ALREADY_EXIST: `Price name ${COMMON.ALREADY_EXIST}`,
+        CREATED_SUCCESSFULLY: `Price ${COMMON.CREATED_SUCCESSFULLY}`,
+    },
+    
     LOGIN_SUCCESSFULLY: 'Login successfully',
     EMAIL_ALREADY_EXIST: 'Email already exist',
     DOMAIN_ALREADY_EXIST: 'Domain already exist',

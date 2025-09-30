@@ -1,7 +1,75 @@
 const Dao = require('../dao/user');
+const mongoose = require('mongoose');
 const { STATUS } = require('../utils/status');
 const { MESSAGE } = require('../utils/message');
 const { createDatabase } = require('../helper/user');
+
+const fetch = async (req, res) => {
+  const { dbname: dbName, _id } = req.headers;
+  let { query = null, projection = null, options = null } = req.query;
+
+  query = query ? JSON.parse(query) : {};
+  projection = projection ? JSON.parse(projection) : {};
+  options = options ? JSON.parse(options) : {};
+
+  if (_id) {
+    query._id = new mongoose.Types.ObjectId(_id);
+  }
+
+  try {
+    const user = await Dao.findOne(dbName, query, projection, options);
+    if (!user) {
+      return res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.USER.EMAIL_PASSWORD_NOT_CORRECT });
+    }
+    return res.status(STATUS.OK).json({ user, message: MESSAGE.USER.LOGIN_SUCCESSFULLY });
+  } catch (error) {
+    console.error(error);
+    res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.SERVER_ERROR });
+  }
+}
+
+const fetchs = async (req, res) => {
+  try {
+    const { dbname: dbName, _id } = req.headers;
+    let { query = null, projection = null, options = null } = req.query;
+
+    query = query ? JSON.parse(query) : null;
+    projection = projection ? JSON.parse(projection) : null;
+    options = options ? JSON.parse(options) : null;
+
+    const users = await Dao.find(dbName, query, projection, options);
+    return res.status(STATUS.OK).json({ users });
+  } catch (error) {
+    console.error(error);
+    res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.SERVER_ERROR });
+  }
+}
+
+const add = async (req, res) => {
+  const { dbname: dbName, _id } = req.headers;
+  let { query = null, projection = null, options = null } = req.body;
+
+  query = query ? JSON.parse(query) : {};
+  projection = projection ? JSON.parse(projection) : {};
+  options = options ? JSON.parse(options) : {};
+
+  try {
+    const isEmailExist = await Dao.findOne(dbName, { 'email': query.email });
+    if (isEmailExist) {
+      return res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.EMAIL_ALREADY_EXIST });
+    }
+    const isDomainExist = await Dao.findOne(dbName, { 'domain': query.domain });
+    if (isDomainExist) {
+      return res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.DOMAIN_ALREADY_EXIST });
+    }
+    const user = await Dao.insertOne(dbName, query, projection, options);
+    return res.status(STATUS.CREATED).json({ user, message: MESSAGE.USER.ACCOUNT_REGESTER_SUCCESSFULLY });
+  } catch (error) {
+    console.error(error);
+    res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.SERVER_ERROR });
+  }
+}
+/**  */
 
 const fetchUser = async (req, res) => {
   let { query = null, projection = null, options = null } = req.query;
@@ -38,28 +106,7 @@ const users = async (req, res) => {
   }
 }
 
-const saveUser = async (req, res) => {
-  let { query = null, projection = null, options = null } = req.body;
-  const dbName = req.headers['dbname'];
-  query = query ? JSON.parse(query) : null;
-  projection = projection ? JSON.parse(projection) : null;
-  options = options ? JSON.parse(options) : null;
-  try {
-    const isEmailExist = await Dao.findOne(dbName, { 'email': query.email });
-    if (isEmailExist) {
-      return res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.EMAIL_ALREADY_EXIST });
-    }
-    const isDomainExist = await Dao.findOne(dbName, { 'domain': query.domain });
-    if (isDomainExist) {
-      return res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.DOMAIN_ALREADY_EXIST });
-    }
-    const user = await Dao.insertOne(dbName, query, projection, options);
-    return res.status(STATUS.CREATED).json({ user, message: MESSAGE.USER_UPDATED_SUCCESSFULLY });
-  } catch (error) {
-    console.error(error);
-    res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.SERVER_ERROR });
-  }
-}
+
 
 
 const fetchUserById = async (req, res) => {
@@ -99,7 +146,7 @@ const createDatabaseById = async (req, res) => {
 
   try {
     const isEmailExist = await Dao.findOne(dbName, { _id: _id });
-    if(!isEmailExist){
+    if (!isEmailExist) {
       return res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: '' });
     }
     const user = await Dao.findOneAndUpdate(dbName, { _id: _id }, { isCreatedDatabase: true, password: isEmailExist.domain });
@@ -130,28 +177,18 @@ const update = async (req, res) => {
     res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.SERVER_ERROR });
   }
 }
-const fetch = async (req, res) => {
-  const { dbname: dbName, _id } = req.headers;
-  let { query = null, projection = null, options = null } = req.query;
 
-  query = query ? JSON.parse(query) : null;
-  projection = projection ? JSON.parse(projection) : null;
-  options = options ? JSON.parse(options) : null;
-
-  try {
-    const user = await Dao.findOne(dbName, { _id, ...query }, projection, options);
-    return res.status(STATUS.OK).json({ user });
-  } catch (error) {
-    console.error(error);
-    res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.SERVER_ERROR });
-  }
-}
 
 
 
 module.exports = {
-  /** GET */
+  add,
   fetch,
+  fetchs,
+  createDatabaseById,
+
+
+  /** GET */
   users,
 
 
@@ -164,8 +201,6 @@ module.exports = {
   update,
 
 
-  saveUser,
   updateUserById,
-  createDatabaseById,
   /** POST */
 }
