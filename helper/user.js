@@ -61,9 +61,6 @@ export const createDatabase = async (account) => {
                 isDefault: true,
             }
         )
-
-        console.log(user)
-
         const html = {
             USER_NAME: account.firstName + ' ' + account.lastName,
             EMAIL: account.email,
@@ -87,7 +84,7 @@ export const createDatabase = async (account) => {
 
 export const deleteDatabase = async (dbName) => {
     try {
-        const dbUri = `${process.env.DATABASE_URI}${dbName}`;
+        const dbUri = `${process.env.DATABASE_URI}${dbName}?authSource=admin`;
         const conn = await mongoose.createConnection(dbUri, {
             useNewUrlParser: true,
             useUnifiedTopology: true,

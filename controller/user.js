@@ -1,8 +1,10 @@
+const path = require("path");
 const Dao = require('../dao/user');
 const mongoose = require('mongoose');
+const { Worker } = require("worker_threads");
 const { STATUS } = require('../utils/status');
 const { MESSAGE } = require('../utils/message');
-const { createDatabase } = require('../helper/user');
+// const { createDatabase } = require('../workers/createDbWorker');
 
 const fetch = async (req, res) => {
   const { dbname: dbName, _id } = req.headers;
@@ -153,11 +155,32 @@ const createDatabaseById = async (req, res) => {
     if (!user) {
       return res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: '' });
     }
-    await createDatabase(user);
+    const plainUser = user.toObject ? user.toObject() : JSON.parse(JSON.stringify(user));
+    console.log('plainUser', plainUser)
+    const worker = new Worker(path.resolve("./workers/createDbWorker.js"), {
+      workerData: plainUser,
+    });
+
+    worker.on("message", (msg) => {
+      if (msg.success) {
+        console.log("✅ DB created:", msg.message);
+      } else {
+        console.error("❌ DB creation failed:", msg.error);
+      }
+    });
+
+    worker.on("error", (err) => {
+      console.error("Worker error:", err);
+    });
+
+    worker.on("exit", (code) => {
+      console.log(`👷 Worker exited with code ${code}`);
+    });
+
     return res.status(STATUS.OK).json({ user, message: MESSAGE.DATABASE_CREATED_SUCCESSFULLY });
   } catch (error) {
-    console.error(error);
-    res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.SERVER_ERROR });
+    console.log(error)
+    // res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.SERVER_ERROR });
   }
 }
 

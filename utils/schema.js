@@ -1,6 +1,7 @@
 export const SCHEMA = {
     USER: 'user',
     ROLE: 'role',
+    FORM: 'form',
     TASK: 'task',
     PRICE: 'price',
     MASTER: 'master',
