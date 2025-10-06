@@ -6,13 +6,16 @@ const COMMON = {
     IS_REQUIRED: 'is required',
     ALREADY_EXIST: 'already exist',
     UPDATED_SUCCESSFULLY: 'updated successfully!',
-    CREATED_SUCCESSFULLY: 'created successfully!',
     DELETED_SUCCESSFULLY: 'deleted successfully!',
+    CREATED_SUCCESSFULLY: 'created successfully!',
 }
 
 const MESSAGE = {
     SERVER_ERROR: 'Server error',
     DELETED_SUCCESSFULLY: 'deleted successfully!',
+    CREATED_SUCCESSFULLY: 'created successfully!',
+    UPDATED_SUCCESSFULLY: 'updated successfully!',
+
     /**  */
 
     USER: {

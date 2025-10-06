@@ -36,8 +36,8 @@ const fetchs = async (req, res) => {
     projection = projection ? JSON.parse(projection) : null;
     options = options ? JSON.parse(options) : null;
 
-    const prices = await Dao.find(dbName, query, projection, options);
-    return res.status(STATUS.OK).json({ prices });
+    const forms = await Dao.find(dbName, query, projection, options);
+    return res.status(STATUS.OK).json({ forms });
   } catch (error) {
     console.error(error);
     res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.SERVER_ERROR });
@@ -45,7 +45,7 @@ const fetchs = async (req, res) => {
 }
 
 const update = async (req, res) => {
-  const { dbname: dbName, _id } = req.headers;
+  const { dbname: dbName } = req.headers;
   let { query = null, projection = null, options = null } = req.body;
 
   query = query ? JSON.parse(query) : {};
@@ -53,15 +53,35 @@ const update = async (req, res) => {
   options = options ? JSON.parse(options) : {};
 
   try {
-    const dashboard = await Dao.findOneAndUpdate(dbName, query, projection, options);
-    return res.status(STATUS.CREATED).json({ dashboard, message: MESSAGE.PRICE.CREATED_SUCCESSFULLY });
-  } catch (error) {
-    console.error(error);
-    res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.SERVER_ERROR });
-  }
-}
+    let form;
 
-const deletePrice = async (req, res) => {
+    if (!query || Object.keys(query).length === 0) {
+      form = await Dao.insertOne(dbName, projection);
+      return res
+      .status(STATUS.CREATED)
+      .json({ form, message: `Form ${MESSAGE.CREATED_SUCCESSFULLY}` });
+    } else {
+      form = await Dao.findOneAndUpdate(
+        dbName,
+        query,
+        projection,
+        { ...options, upsert: true, new: true }
+      );
+      return res
+      .status(STATUS.OK)
+      .json({ form, message: `Form ${MESSAGE.UPDATED_SUCCESSFULLY}` });
+    }
+    
+  } catch (error) {
+    console.error("❌ update error:", error);
+    res
+      .status(STATUS.INTERNAL_SERVER_ERROR)
+      .json({ message: MESSAGE.SERVER_ERROR });
+  }
+};
+
+
+const deleteForm = async (req, res) => {
   const { dbname: dbName, _id } = req.headers;
   let { query = null, projection = null, options = null } = req.query;
 
@@ -70,8 +90,8 @@ const deletePrice = async (req, res) => {
   options = options ? JSON.parse(options) : {};
 
   try {
-    const price = await Dao.deleteOne(dbName, query, projection, options);
-    return res.status(STATUS.OK).json({ price, message: `Price ${MESSAGE.DELETED_SUCCESSFULLY}`});
+    const form = await Dao.deleteOne(dbName, query, projection, options);
+    return res.status(STATUS.OK).json({ form, message: `Form ${MESSAGE.DELETED_SUCCESSFULLY}` });
   } catch (error) {
     console.error(error);
     res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.SERVER_ERROR });
@@ -86,5 +106,5 @@ module.exports = {
   fetch,
   fetchs,
   update,
-  deletePrice,
+  deleteForm,
 }
