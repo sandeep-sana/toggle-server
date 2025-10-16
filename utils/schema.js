@@ -1,4 +1,7 @@
 export const SCHEMA = {
+    FIXED:{
+        TASK: 'task',
+    },
     USER: 'user',
     ROLE: 'role',
     FORM: 'form',

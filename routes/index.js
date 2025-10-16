@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const user = require('./user');
-const task = require('./task');
+// const task = require('./task');
 const role = require('./role');
 const form = require('./form');
 const price = require('./price');
@@ -12,6 +12,8 @@ const dashboard = require('./dashboard');
 const department = require('./department');
 const dynamicMaster = require('./dynamicMaster');
 const masterBindingRule = require('./masterBindingRule');
+
+const task = require('./fixed/task');
 
 router.use('/task', task);
 router.use('/user', user);

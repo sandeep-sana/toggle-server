@@ -28,33 +28,33 @@ export const createDatabase = async (account) => {
             upsert: true,
             rawResult: true,
         });
-        await TaskDao.findOneAndUpdate(account.domain,
-            { userId: user._id },
-            {
-                userId: user._id,
-                tasks: [
-                    {
-                        name: 'first click on access page.',
-                        status: false,
-                        path: 'access',
-                    },
-                    {
-                        name: 'available modules drag and drop the role master to active modules',
-                        status: false,
-                        accessMoveToActive: 'ROLE',
-                    },
-                    {
-                        name: 'first setup the roles.',
-                        status: false,
-                    }
-                ]
-            },
-            {
-                new: true,
-                upsert: true,
-                rawResult: true,
-            }
-        )
+        // await TaskDao.findOneAndUpdate(account.domain,
+        //     { userId: user._id },
+        //     {
+        //         userId: user._id,
+        //         tasks: [
+        //             {
+        //                 name: 'first click on access page.',
+        //                 status: false,
+        //                 path: 'access',
+        //             },
+        //             {
+        //                 name: 'available modules drag and drop the role master to active modules',
+        //                 status: false,
+        //                 accessMoveToActive: 'ROLE',
+        //             },
+        //             {
+        //                 name: 'first setup the roles.',
+        //                 status: false,
+        //             }
+        //         ]
+        //     },
+        //     {
+        //         new: true,
+        //         upsert: true,
+        //         rawResult: true,
+        //     }
+        // )
         await RoleDao.insertOne(account.domain,
             {
                 name: user.activeRole,
