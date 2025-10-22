@@ -8,6 +8,7 @@ export const SCHEMA = {
     TASK: 'task',
     PRICE: 'price',
     MASTER: 'master',
+    WEBSITE: 'website',
     SETTING: 'setting',
     DASHBOARD: 'dashboard',
     DEPARTMENT: 'department',

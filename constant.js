@@ -9,7 +9,8 @@ export const MODULES = {
     ACCEPT_ACCOUNT: { label: "ACCEPT ACCOUNT", path: "ACCEPTACCOUNT" },
     REJECT_ACCOUNT: { label: "REJECT ACCOUNT", path: "REJECTACCOUNT" },
     PRICE: { label: "PRICE", path: "PRICE" },
-    PRICE: { label: "WEBSITE", path: "WEBSITE" },
+    WEBSITE: { label: "WEBSITE", path: "WEBSITE" },
+    SETTING: { label: "SETTING", path: "SETTING" },
 }
 
 export const SUPER_ADMIN_DETAILS = {
@@ -28,5 +29,7 @@ export const SUPER_ADMIN_DETAILS = {
         MODULES.REJECT_ACCOUNT,
         MODULES.BLOCK_ACCOUNT,
         MODULES.PRICE,
+        MODULES.WEBSITE,
+        MODULES.SETTING,
     ]
 }
