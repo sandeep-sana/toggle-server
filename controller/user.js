@@ -60,9 +60,11 @@ const add = async (req, res) => {
     if (isEmailExist) {
       return res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.EMAIL_ALREADY_EXIST });
     }
-    const isDomainExist = await Dao.findOne(dbName, { 'domain': query.domain });
-    if (isDomainExist) {
-      return res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.DOMAIN_ALREADY_EXIST });
+    if (query.domain) {
+      const isDomainExist = await Dao.findOne(dbName, { 'domain': query.domain });
+      if (isDomainExist) {
+        return res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.DOMAIN_ALREADY_EXIST });
+      }
     }
     const user = await Dao.insertOne(dbName, query, projection, options);
     return res.status(STATUS.CREATED).json({ user, message: MESSAGE.USER.ACCOUNT_REGESTER_SUCCESSFULLY });
@@ -193,8 +195,13 @@ const update = async (req, res) => {
   options = options ? JSON.parse(options) : null;
 
   try {
-    const user = await Dao.findOneAndUpdate(dbName, { _id, ...query }, projection, options);
-    return res.status(STATUS.OK).json({ user, message: MESSAGE.USER_UPDATED_SUCCESSFULLY });
+    if (!query || Object.keys(query).length === 0) {
+      let user = await Dao.insertOne(dbName, projection);
+      return res.status(STATUS.CREATED).json({ user, message: `User ${MESSAGE.CREATED_SUCCESSFULLY}` });
+    } else {
+      let user = await Dao.findOneAndUpdate(dbName, query, projection, options);
+      return res.status(STATUS.OK).json({ user, message: `User ${MESSAGE.UPDATED_SUCCESSFULLY}` });
+    }
   } catch (error) {
     console.error(error);
     res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.SERVER_ERROR });

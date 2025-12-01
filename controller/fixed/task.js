@@ -81,7 +81,7 @@ const update = async (req, res) => {
 };
 
 
-const deleteForm = async (req, res) => {
+const deleteTask = async (req, res) => {
   const { dbname: dbName, _id } = req.headers;
   let { query = null, projection = null, options = null } = req.query;
 
@@ -91,7 +91,7 @@ const deleteForm = async (req, res) => {
 
   try {
     const form = await Dao.deleteOne(dbName, query, projection, options);
-    return res.status(STATUS.OK).json({ form, message: `Form ${MESSAGE.DELETED_SUCCESSFULLY}` });
+    return res.status(STATUS.OK).json({ form, message: `Task ${MESSAGE.DELETED_SUCCESSFULLY}` });
   } catch (error) {
     console.error(error);
     res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.SERVER_ERROR });
@@ -106,5 +106,5 @@ module.exports = {
   fetch,
   fetchs,
   update,
-  deleteForm,
+  deleteTask,
 }

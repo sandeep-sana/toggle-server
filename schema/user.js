@@ -17,7 +17,7 @@ const Schema = new mongoose.Schema({
     isHierarchy: { type: Boolean },
     isCreatedDatabase: { type: Boolean, default: false },
     status: { type: String, default: "PENDING", enum: ["PENDING"] },
-    role: [{ type: String, enum: ["SUPER_ADMIN", "ADMIN", "SYSTEM_ADMIN"] }],
+    role: [{ type: String }],
     activeRole: { type: String, enum: ["SUPER_ADMIN", "ADMIN", "SYSTEM_ADMIN"] },
     price: { type: Number},
 }, { timestamps: true })

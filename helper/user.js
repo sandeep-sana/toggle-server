@@ -21,6 +21,7 @@ export const createDatabase = async (account) => {
                 modules: [
                     { label: 'DASHBOARD', path: 'DASHBOARD'},
                     { label: 'ACCESS', path: 'ACCESS'},
+                    { label: 'USER', path: 'USER'},
                 ],
                 isHierarchy: false,
             }, {

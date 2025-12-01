@@ -7,6 +7,6 @@ router.get('/fetchs', controller.fetchs);
 
 router.post('/update', controller.update);
 
-router.delete('/delete', controller.deleteForm);
+router.delete('/delete', controller.deleteTask);
 
 module.exports = router
