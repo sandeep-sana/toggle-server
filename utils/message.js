@@ -12,15 +12,16 @@ const COMMON = {
 
 const MESSAGE = {
     SERVER_ERROR: 'Server error',
+    SUCCESSFULLY: 'successfully!',
     DELETED_SUCCESSFULLY: 'deleted successfully!',
     CREATED_SUCCESSFULLY: 'created successfully!',
     UPDATED_SUCCESSFULLY: 'updated successfully!',
 
+    EMAIL_PASSWORD_NOT_CORRECT: `Email password not correct.`,
     /**  */
 
     USER: {
         LOGIN_SUCCESSFULLY: `Login successfully.`,
-        EMAIL_PASSWORD_NOT_CORRECT: `Email password not correct.`,
         ACCOUNT_REGESTER_SUCCESSFULLY: `Account register successfully.`,
     },
     PRICE: {
