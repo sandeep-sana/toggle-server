@@ -10,10 +10,6 @@ const fetch = async (req, res) => {
   const { dbname: dbName, _id } = req.headers;
   let { query = null, projection = null, options = null } = req.query;
 
-  query = query ? JSON.parse(query) : {};
-  projection = projection ? JSON.parse(projection) : {};
-  options = options ? JSON.parse(options) : {};
-
   if (_id) {
     query._id = new mongoose.Types.ObjectId(_id);
   }
@@ -58,16 +54,16 @@ const add = async (req, res) => {
   try {
     const isEmailExist = await Dao.findOne(dbName, { 'email': query.email });
     if (isEmailExist) {
-      return res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.EMAIL_ALREADY_EXIST });
+      return res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: `Email ${MESSAGE.ALREADY_EXIST}` });
     }
     if (query.domain) {
       const isDomainExist = await Dao.findOne(dbName, { 'domain': query.domain });
       if (isDomainExist) {
-        return res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.DOMAIN_ALREADY_EXIST });
+        return res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: `Domain ${MESSAGE.ALREADY_EXIST}` });
       }
     }
     const user = await Dao.insertOne(dbName, query, projection, options);
-    return res.status(STATUS.CREATED).json({ user, message: MESSAGE.USER.ACCOUNT_REGESTER_SUCCESSFULLY });
+    return res.status(STATUS.CREATED).json({ user, message: `Signup ${SUCCESSFULLY}` });
   } catch (error) {
     console.error(error);
     res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.SERVER_ERROR });
