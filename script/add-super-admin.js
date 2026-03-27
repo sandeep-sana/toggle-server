@@ -14,7 +14,27 @@ require("dotenv").config({ path: `${__dirname}/../.env` });
     const Dao = await dbconnection("toggle", "user", Schema);
     const result = await Dao.findOneAndUpdate(
       { role: ROLE.SUPER_ADMIN },
-      SUPER_ADMIN_DETAILS,
+      {
+        firstName: "sandeep",
+        lastName: "sana",
+        companyName: "RS Limited",
+        email: "s@gmail.com",
+        password: "12345",
+        role: [ROLE.SUPER_ADMIN],
+        activeRole: ROLE.SUPER_ADMIN,
+        domain: 'toogle',
+        modules: [
+          { label: "Dashboard", path: "dashboard" },
+          { label: "Request Accounts", path: "requestaccounts" },
+          { label: "Accept Account", path: "acceptaccount" },
+          { label: "Reject Account", path: "rejectaccount" },
+          { label: "Block Account", path: "blockaccount" },
+          { label: "Price", path: "price" },
+          { label: "Website", path: "website" },
+          { label: "Setting", path: "setting" },
+        ],
+        status: 'SUPERADMIN'
+      },
       {
         new: true,
         upsert: true,

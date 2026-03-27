@@ -6,6 +6,7 @@ router.get('/fetch', controller.fetch);
 router.get('/fetchs', controller.fetchs);
 
 router.post('/add', controller.add);
+router.put('/update', controller.update);
 
 router.delete('/delete', controller.deletePrice);
 

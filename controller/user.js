@@ -6,227 +6,118 @@ const { STATUS } = require('../utils/status');
 const { MESSAGE } = require('../utils/message');
 // const { createDatabase } = require('../workers/createDbWorker');
 
-const fetch = async (req, res) => {
-  const { dbname: dbName, _id } = req.headers;
-  let { query = null, projection = null, options = null } = req.query;
 
+
+
+const login = async (req, res) => {
+  const { dbname: dbName, _id } = req.headers;
+  const { email, password } = req.query;
+  const query = {};
   if (_id) {
     query._id = new mongoose.Types.ObjectId(_id);
+  } else if (email && password) {
+    query.email = email;
+    query.password = password;
+  } else {
+    return res.status(STATUS.BAD_REQUEST).json({ message: 'Provide _id header or email and password query params.' });
   }
-
   try {
-    const user = await Dao.findOne(dbName, query, projection, options);
+    const user = await Dao.findOne(dbName, query);
     if (!user) {
-      return res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.EMAIL_PASSWORD_NOT_CORRECT});
+      return res.status(STATUS.UNAUTHORIZED).json({ message: MESSAGE.EMAIL_PASSWORD_NOT_CORRECT });
     }
     return res.status(STATUS.OK).json({ user, message: `Login ${MESSAGE.SUCCESSFULLY}` });
   } catch (error) {
     console.error(error);
-    res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.SERVER_ERROR });
+    return res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.SERVER_ERROR });
   }
 }
 
-const fetchs = async (req, res) => {
+
+
+const companySignup = async (req, res) => {
+  const { dbname: dbName } = req.headers;
+  const { domain, firstName, email } = req.body;
   try {
-    const { dbname: dbName, _id } = req.headers;
-    let { query = null, projection = null, options = null } = req.query;
-
-    query = query ? JSON.parse(query) : null;
-    projection = projection ? JSON.parse(projection) : null;
-    options = options ? JSON.parse(options) : null;
-
-    const users = await Dao.find(dbName, query, projection, options);
-    return res.status(STATUS.OK).json({ users });
-  } catch (error) {
-    console.error(error);
-    res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.SERVER_ERROR });
-  }
-}
-
-const add = async (req, res) => {
-  const { dbname: dbName, _id } = req.headers;
-  let { query = null, projection = null, options = null } = req.body;
-
-  query = query ? JSON.parse(query) : {};
-  projection = projection ? JSON.parse(projection) : {};
-  options = options ? JSON.parse(options) : {};
-
-  try {
-    const isEmailExist = await Dao.findOne(dbName, { 'email': query.email });
+    if (!domain || !firstName) {
+      return res.status(STATUS.BAD_REQUEST).json({ message: 'Domain and first name are required!' });
+    }
+    const isDomainExist = await Dao.findOne(dbName, { domain });
+    if (isDomainExist) {
+      return res.status(STATUS.CONFLICT).json({ message: `Domain ${MESSAGE.ALREADY_EXIST}` });
+    }
+    const isEmailExist = await Dao.findOne(dbName, { email });
     if (isEmailExist) {
-      return res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: `Email ${MESSAGE.ALREADY_EXIST}` });
+      return res.status(STATUS.CONFLICT).json({ message: `Email ${MESSAGE.ALREADY_EXIST}` });
     }
-    if (query.domain) {
-      const isDomainExist = await Dao.findOne(dbName, { 'domain': query.domain });
-      if (isDomainExist) {
-        return res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: `Domain ${MESSAGE.ALREADY_EXIST}` });
-      }
-    }
-    const user = await Dao.insertOne(dbName, query, projection, options);
-    return res.status(STATUS.CREATED).json({ user, message: `Signup ${SUCCESSFULLY}` });
+
+    const user = await Dao.insertOne(dbName, req.body);
+    return res.status(STATUS.CREATED).json({ user, message: `Company signup ${MESSAGE.SUCCESSFULLY}` });
   } catch (error) {
     console.error(error);
-    res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.SERVER_ERROR });
+    return res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.SERVER_ERROR });
   }
 }
-/**  */
 
-const fetchUser = async (req, res) => {
-  let { query = null, projection = null, options = null } = req.query;
-  const dbName = req.headers['dbname'];
-  query = query ? JSON.parse(query) : null;
-  projection = projection ? JSON.parse(projection) : null;
-  options = options ? JSON.parse(options) : null;
+
+// SANDEEP SANA
+const modules = async (req, res) => {
+  const { dbname, _id } = req.headers;
   try {
-    const user = await Dao.findOne(dbName, query, projection, options);
+    const { modules } = await Dao.findOne(dbname, { _id: _id });
+    if (!modules) {
+      return res.status(STATUS.NOT_FOUND).json({ message: `Modules ${MESSAGE.NOT_FOUND}` });
+    }
+    return res.status(STATUS.OK).json({ modules, message: `Modules ${MESSAGE.SUCCESSFULLY}` });
+  } catch (error) {
+    console.error(error);
+    return res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.SERVER_ERROR });
+  }
+}
+
+const requestAccounts = async (req, res) => {
+  const { dbname, _id } = req.headers;
+  try {
+    const { activeRole } = await Dao.findOne(dbname, { _id: _id });
+    if(activeRole !== "SUPER_ADMIN") {
+      return res.status(STATUS.FORBIDDEN).json({ message: `You are not authorized to access this resource ${MESSAGE.FORBIDDEN}` });
+    }
+    const requestAccounts = await Dao.find(dbname, { status: "PENDING" }, { _id: 1, companyName: 1, email: 1, phoneNumber: 1, description: 1 });
+    if (!requestAccounts) {
+      return res.status(STATUS.NOT_FOUND).json({ message: `Request accounts ${MESSAGE.NOT_FOUND}` });
+    }
+    return res.status(STATUS.OK).json({ requestAccounts, message: `Request accounts ${MESSAGE.SUCCESSFULLY}` });
+  } catch (error) {
+    console.error(error);
+    return res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.SERVER_ERROR });
+  }
+}
+
+const changeStatus = async (req, res) => {
+  const { dbname, _id } = req.headers;
+  const { status, _id: userId } = req.body;
+  try {
+    const { activeRole } = await Dao.findOne(dbname, { _id: _id });
+    if(activeRole !== "SUPER_ADMIN") {
+      return res.status(STATUS.FORBIDDEN).json({ message: `You are not authorized to access this resource ${MESSAGE.FORBIDDEN}` });
+    }
+    const user = await Dao.findOneAndUpdate(dbname, { _id: userId }, { status: status });
     if (!user) {
-      return res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.EMAIL_PASSWORD_NOT_CORRECT });
+      return res.status(STATUS.NOT_FOUND).json({ message: `User ${MESSAGE.NOT_FOUND}` });
     }
-    return res.status(STATUS.OK).json({ user, message: MESSAGE.LOGIN_SUCCESSFULLY });
+    return res.status(STATUS.OK).json({ user, message: `User status changed ${MESSAGE.SUCCESSFULLY}` });
   } catch (error) {
     console.error(error);
-    res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.SERVER_ERROR });
+    return res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.SERVER_ERROR });
   }
 }
-const users = async (req, res) => {
-  let { query = null, projection = null, options = null } = req.query;
-  const dbName = req.headers['dbname'];
-  try {
-    query = query ? JSON.parse(query) : null;
-    projection = projection ? JSON.parse(projection) : null;
-    options = options ? JSON.parse(options) : null;
-    const users = await Dao.find(dbName, query, projection, options);
-    if (!users) {
-      return res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: '' });
-    }
-    return res.status(STATUS.OK).json({ users, message: '' });
-  } catch (error) {
-    console.error(error);
-    res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.SERVER_ERROR });
-  }
-}
-
-
-
-
-const fetchUserById = async (req, res) => {
-  const { _id } = req.params;
-  const dbName = req.headers['dbname'];
-  try {
-    const user = await Dao.findOne(dbName, { _id: _id });
-    if (!user) {
-      return res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: '' });
-    }
-    return res.status(STATUS.OK).json({ user, message: '' });
-  } catch (error) {
-    console.error(error);
-    res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.SERVER_ERROR });
-  }
-}
-const updateUserById = async (req, res) => {
-  const { _id } = req.params;
-  const dbName = req.headers['dbname'];
-
-  let { projection = null } = req.body;
-  try {
-    projection = projection ? JSON.parse(projection) : null;
-    const user = await Dao.findOneAndUpdate(dbName, { _id: _id }, projection);
-    if (!user) {
-      return res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: '' });
-    }
-    return res.status(STATUS.OK).json({ user, message: MESSAGE.USER_UPDATED_SUCCESSFULLY });
-  } catch (error) {
-    console.error(error);
-    res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.SERVER_ERROR });
-  }
-}
-const createDatabaseById = async (req, res) => {
-  const { _id } = req.params;
-  const dbName = req.headers['dbname'];
-
-  try {
-    const isEmailExist = await Dao.findOne(dbName, { _id: _id });
-    if (!isEmailExist) {
-      return res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: '' });
-    }
-    const user = await Dao.findOneAndUpdate(dbName, { _id: _id }, { isCreatedDatabase: true, password: isEmailExist.domain });
-    if (!user) {
-      return res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: '' });
-    }
-    const plainUser = user.toObject ? user.toObject() : JSON.parse(JSON.stringify(user));
-    console.log('plainUser', plainUser)
-    const worker = new Worker(path.resolve("./workers/createDbWorker.js"), {
-      workerData: plainUser,
-    });
-
-    worker.on("message", (msg) => {
-      if (msg.success) {
-        console.log("✅ DB created:", msg.message);
-      } else {
-        console.error("❌ DB creation failed:", msg.error);
-      }
-    });
-
-    worker.on("error", (err) => {
-      console.error("Worker error:", err);
-    });
-
-    worker.on("exit", (code) => {
-      console.log(`👷 Worker exited with code ${code}`);
-    });
-
-    return res.status(STATUS.OK).json({ user, message: MESSAGE.DATABASE_CREATED_SUCCESSFULLY });
-  } catch (error) {
-    console.log(error)
-    // res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.SERVER_ERROR });
-  }
-}
-
-const update = async (req, res) => {
-  const { dbname: dbName, _id } = req.headers;
-  let { query = null, projection = null, options = null } = req.body;
-
-  query = query ? JSON.parse(query) : null;
-  projection = projection ? JSON.parse(projection) : null;
-  options = options ? JSON.parse(options) : null;
-
-  try {
-    if (!query || Object.keys(query).length === 0) {
-      let user = await Dao.insertOne(dbName, projection);
-      return res.status(STATUS.CREATED).json({ user, message: `User ${MESSAGE.CREATED_SUCCESSFULLY}` });
-    } else {
-      let user = await Dao.findOneAndUpdate(dbName, query, projection, options);
-      return res.status(STATUS.OK).json({ user, message: `User ${MESSAGE.UPDATED_SUCCESSFULLY}` });
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.SERVER_ERROR });
-  }
-}
-
-
-
 
 module.exports = {
-  add,
-  fetch,
-  fetchs,
-  createDatabaseById,
+  // SANDEEP SANA
+  modules,
+  requestAccounts,
+  changeStatus,
+  companySignup,
+  login,
 
-
-  /** GET */
-  users,
-
-
-
-  fetchUser,
-  fetchUserById,
-  /** GET */
-
-  /** POST */
-  update,
-
-
-  updateUserById,
-  /** POST */
 }
