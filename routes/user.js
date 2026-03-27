@@ -6,18 +6,19 @@ const controller = require('../controller/user')
 
 // SANDEEP SANA
 router.get('/login', controller.login);
+router.get('/users', controller.users);
 router.get('/modules', controller.modules);
-router.get('/request-accounts', controller.requestAccounts);
 router.get('/accept-accounts', controller.acceptAccounts);
 router.get('/reject-accounts', controller.rejectAccounts);
-router.post('/company-signup', controller.companySignup);
+router.get('/request-accounts', controller.requestAccounts);
 router.post('/change-status', controller.changeStatus);
+router.post('/company-signup', controller.companySignup);
 router.post('/create-database', controller.createDatabase);
+router.post('/update', controller.update);
 
 // Uncomment when these handlers exist on controller/user.js:
 // router.get('/fetch', controller.fetch);
 // router.get('/fetchs', controller.fetchs);
-// router.post('/update', controller.update);
 // router.post('/add', controller.add);
 
 // router.post('/create-database/:_id', controller.createDatabaseById);

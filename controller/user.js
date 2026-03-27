@@ -13,7 +13,7 @@ const { CREATE_PASSWORD } = require('../utils/email-template');
 
 
 const login = async (req, res) => {
-  const { dbname: dbName, _id } = req.headers;
+  const { dbname, _id } = req.headers;
   const { email, password } = req.query;
   const query = {};
   if (_id) {
@@ -25,7 +25,7 @@ const login = async (req, res) => {
     return res.status(STATUS.BAD_REQUEST).json({ message: 'Provide _id header or email and password query params.' });
   }
   try {
-    const user = await Dao.findOne(dbName, query);
+    const user = await Dao.findOne(dbname, query);
     if (!user) {
       return res.status(STATUS.UNAUTHORIZED).json({ message: MESSAGE.EMAIL_PASSWORD_NOT_CORRECT });
     }
@@ -182,12 +182,13 @@ const createDatabase = async (req, res) => {
         role: user.role,
         activeRole: user.activeRole,
         modules: [
-          { label: 'DASHBOARD', path: 'DASHBOARD' },
-          { label: 'ACCESS', path: 'ACCESS' },
-          { label: 'USER', path: 'USER' },
+          { label: 'Dashboard', path: 'dashboard' },
+          { label: 'Access', path: 'access' },
+          { label: 'User', path: 'user' },
         ],
         isHierarchy: false,
         isCreatedDatabase: true,
+        status: "ACCEPT",
       }, {
       new: true,
       upsert: true,
@@ -221,7 +222,48 @@ const createDatabase = async (req, res) => {
   }
 }
 
+
+const users = async (req, res) => {
+  const { dbname, _id } = req.headers;
+  try {
+    const users = await Dao.find(dbname, { status: "ACCEPT" }, { _id: 1, firstName: 1, lastName: 1, companyName: 1, email: 1, phoneNumber: 1, description: 1, status: 1 });
+    if (!users) {
+      return res.status(STATUS.NOT_FOUND).json({ message: `Users ${MESSAGE.NOT_FOUND}` });
+    }
+    return res.status(STATUS.OK).json({ users, message: `Users ${MESSAGE.SUCCESSFULLY}` });
+  } catch (error) {
+    console.error(error);
+    return res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.SERVER_ERROR });
+  }
+}
+
+const update = async (req, res) => {
+  const { dbname } = req.headers;
+  let { query = null, projection = null, options = null } = req.body;
+
+  query = typeof query === 'string' ? JSON.parse(query) : (query || {});
+  projection = typeof projection === 'string' ? JSON.parse(projection) : (projection || {});
+  options = typeof options === 'string' ? JSON.parse(options) : (options || {});
+
+  try {
+    if (!query || Object.keys(query).length === 0) {
+      return res.status(STATUS.BAD_REQUEST).json({ message: 'Query is required!' });
+    }
+
+    const user = await Dao.findOneAndUpdate(dbname, query, projection, { new: true, ...options });
+    if (!user) {
+      return res.status(STATUS.NOT_FOUND).json({ message: `User ${MESSAGE.NOT_FOUND}` });
+    }
+    return res.status(STATUS.OK).json({ user, message: `User updated ${MESSAGE.SUCCESSFULLY}` });
+  } catch (error) {
+    console.error(error);
+    return res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.SERVER_ERROR });
+  }
+}
+    
 module.exports = {
+  users,
+  update,
   modules,
   requestAccounts,
   acceptAccounts,
