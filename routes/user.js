@@ -12,6 +12,7 @@ router.get('/accept-accounts', controller.acceptAccounts);
 router.get('/reject-accounts', controller.rejectAccounts);
 router.post('/company-signup', controller.companySignup);
 router.post('/change-status', controller.changeStatus);
+router.post('/create-database', controller.createDatabase);
 
 // Uncomment when these handlers exist on controller/user.js:
 // router.get('/fetch', controller.fetch);

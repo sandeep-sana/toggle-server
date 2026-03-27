@@ -1,11 +1,14 @@
 const path = require("path");
 const Dao = require('../dao/user');
+const RoleDao = require('../dao/role');
+
 const mongoose = require('mongoose');
 const { Worker } = require("worker_threads");
 const { STATUS } = require('../utils/status');
 const { MESSAGE } = require('../utils/message');
 // const { createDatabase } = require('../workers/createDbWorker');
-
+const { sendEmail } = require('../sendEmail');
+const { CREATE_PASSWORD } = require('../utils/email-template');
 
 
 
@@ -100,7 +103,7 @@ const acceptAccounts = async (req, res) => {
     if (activeRole !== "SUPER_ADMIN") {
       return res.status(STATUS.FORBIDDEN).json({ message: `You are not authorized to access this resource ${MESSAGE.FORBIDDEN}` });
     }
-    const acceptAccounts = await Dao.find(dbname, { status: "ACCEPT" }, { _id: 1, companyName: 1, email: 1, phoneNumber: 1, description: 1 });
+    const acceptAccounts = await Dao.find(dbname, { status: "ACCEPT" }, { _id: 1, companyName: 1, email: 1, phoneNumber: 1, description: 1, isCreatedDatabase: 1, domain: 1 });
     if (!acceptAccounts) {
       return res.status(STATUS.NOT_FOUND).json({ message: `Accept accounts ${MESSAGE.NOT_FOUND}` });
     }
@@ -148,13 +151,83 @@ const changeStatus = async (req, res) => {
   }
 }
 
+const createDatabase = async (req, res) => {
+  const { dbname, _id } = req.headers;
+  const { _id: userId } = req.body;
+  try {
+    const { activeRole } = await Dao.findOne(dbname, { _id: _id });
+    if (activeRole !== "SUPER_ADMIN") {
+      return res.status(STATUS.FORBIDDEN).json({ message: `You are not authorized to access this resource ${MESSAGE.FORBIDDEN}` });
+    }
+    const user = await Dao.findOneAndUpdate(dbname, { _id: userId }, { isCreatedDatabase: true }, { new: true, upsert: true, rawResult: true });
+    if (!user) {
+      return res.status(STATUS.NOT_FOUND).json({ message: `User ${MESSAGE.NOT_FOUND}` });
+    }
+    // create database
+    const dbUri = `${process.env.DATABASE_URI}${user.domain}?authSource=admin`;
+    const conn = await mongoose.createConnection(dbUri, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    await conn.dropDatabase();
+    console.log(`🗑️ Database "${user.domain}" dropped successfully.`);
+    user.domain = user.domain.toLowerCase();
+    const account = await Dao.findOneAndUpdate(user.domain,
+      { email: user.email },
+      {
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        password: user.domain,
+        role: user.role,
+        activeRole: user.activeRole,
+        modules: [
+          { label: 'DASHBOARD', path: 'DASHBOARD' },
+          { label: 'ACCESS', path: 'ACCESS' },
+          { label: 'USER', path: 'USER' },
+        ],
+        isHierarchy: false,
+        isCreatedDatabase: true,
+      }, {
+      new: true,
+      upsert: true,
+      rawResult: true,
+    });
+    await RoleDao.insertOne(user.domain,
+      {
+        name: user.activeRole,
+        isDefault: true,
+      }
+    )
+    const html = {
+      USER_NAME: account.firstName + ' ' + account.lastName,
+      EMAIL: user.email,
+      PASSWORD: account.domain,
+      COMPANY_NAME: process.env.COMPANY_NAME,
+      DOMAIN: account.domain,
+    }
+    const email = {
+      from: process.env.EMAIL_USER,
+      to: user.email,
+      subject: 'create password',
+      html: CREATE_PASSWORD(html),
+    }
+    await sendEmail(email);
+    console.log(`📦 Database "${user.domain}" created with default collection.`);
+    return res.status(STATUS.OK).json({ user, message: `User database created ${MESSAGE.SUCCESSFULLY}` });
+  } catch (error) {
+    console.error(error);
+    return res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.SERVER_ERROR });
+  }
+}
+
 module.exports = {
-  // SANDEEP SANA
   modules,
   requestAccounts,
   acceptAccounts,
   rejectAccounts,
   changeStatus,
+  createDatabase,
   companySignup,
   login,
 
