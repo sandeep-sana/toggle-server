@@ -8,6 +8,8 @@ const controller = require('../controller/user')
 router.get('/login', controller.login);
 router.get('/modules', controller.modules);
 router.get('/request-accounts', controller.requestAccounts);
+router.get('/accept-accounts', controller.acceptAccounts);
+router.get('/reject-accounts', controller.rejectAccounts);
 router.post('/company-signup', controller.companySignup);
 router.post('/change-status', controller.changeStatus);
 

@@ -79,7 +79,7 @@ const requestAccounts = async (req, res) => {
   const { dbname, _id } = req.headers;
   try {
     const { activeRole } = await Dao.findOne(dbname, { _id: _id });
-    if(activeRole !== "SUPER_ADMIN") {
+    if (activeRole !== "SUPER_ADMIN") {
       return res.status(STATUS.FORBIDDEN).json({ message: `You are not authorized to access this resource ${MESSAGE.FORBIDDEN}` });
     }
     const requestAccounts = await Dao.find(dbname, { status: "PENDING" }, { _id: 1, companyName: 1, email: 1, phoneNumber: 1, description: 1 });
@@ -93,12 +93,48 @@ const requestAccounts = async (req, res) => {
   }
 }
 
+const acceptAccounts = async (req, res) => {
+  const { dbname, _id } = req.headers;
+  try {
+    const { activeRole } = await Dao.findOne(dbname, { _id: _id });
+    if (activeRole !== "SUPER_ADMIN") {
+      return res.status(STATUS.FORBIDDEN).json({ message: `You are not authorized to access this resource ${MESSAGE.FORBIDDEN}` });
+    }
+    const acceptAccounts = await Dao.find(dbname, { status: "ACCEPT" }, { _id: 1, companyName: 1, email: 1, phoneNumber: 1, description: 1 });
+    if (!acceptAccounts) {
+      return res.status(STATUS.NOT_FOUND).json({ message: `Accept accounts ${MESSAGE.NOT_FOUND}` });
+    }
+    return res.status(STATUS.OK).json({ acceptAccounts, message: `Accept accounts ${MESSAGE.SUCCESSFULLY}` });
+  } catch (error) {
+    console.error(error);
+    return res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.SERVER_ERROR });
+  }
+}
+
+const rejectAccounts = async (req, res) => {
+  const { dbname, _id } = req.headers;
+  try {
+    const { activeRole } = await Dao.findOne(dbname, { _id: _id });
+    if (activeRole !== "SUPER_ADMIN") {
+      return res.status(STATUS.FORBIDDEN).json({ message: `You are not authorized to access this resource ${MESSAGE.FORBIDDEN}` });
+    }
+    const rejectAccounts = await Dao.find(dbname, { status: "REJECT" }, { _id: 1, companyName: 1, email: 1, phoneNumber: 1, description: 1 });
+    if (!rejectAccounts) {
+      return res.status(STATUS.NOT_FOUND).json({ message: `Reject accounts ${MESSAGE.NOT_FOUND}` });
+    }
+    return res.status(STATUS.OK).json({ rejectAccounts, message: `Reject accounts ${MESSAGE.SUCCESSFULLY}` });
+  } catch (error) {
+    console.error(error);
+    return res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: MESSAGE.SERVER_ERROR });
+  }
+}
+
 const changeStatus = async (req, res) => {
   const { dbname, _id } = req.headers;
   const { status, _id: userId } = req.body;
   try {
     const { activeRole } = await Dao.findOne(dbname, { _id: _id });
-    if(activeRole !== "SUPER_ADMIN") {
+    if (activeRole !== "SUPER_ADMIN") {
       return res.status(STATUS.FORBIDDEN).json({ message: `You are not authorized to access this resource ${MESSAGE.FORBIDDEN}` });
     }
     const user = await Dao.findOneAndUpdate(dbname, { _id: userId }, { status: status });
@@ -116,6 +152,8 @@ module.exports = {
   // SANDEEP SANA
   modules,
   requestAccounts,
+  acceptAccounts,
+  rejectAccounts,
   changeStatus,
   companySignup,
   login,
